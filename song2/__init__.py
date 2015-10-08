@@ -32,6 +32,15 @@ class UnknownProperty(Exception):
     return '<%s> unknown property "%s"' % (self.name, self.schema)
 
 
+class NotRewritable(Exception):
+
+  def __init__(self, name):
+    self.name = name
+
+  def __str__(self):
+    return '%s is not rewritable field after generate object' % self.name
+
+
 class Schema(dict):
   allow_optional = True
   merge_optional = False
@@ -89,11 +98,11 @@ class Schema(dict):
       raise AttributeError(name)
 
   def __setitem__(self, key, value):
-    self._assert_is_writable()
+    self._assert_is_writable(key)
     super(Schema, self).__setitem__(key, value)
 
   def update(self, *args, **kwargs):
-    self._assert_is_writable()
+    self._assert_is_writable(key)
     super(Schema, self).update(*args, **kwargs)
 
   def _handle_optional_values(self, fields, inputs):
@@ -104,6 +113,6 @@ class Schema(dict):
           raise UnknownProperty(self.__class__.__name__, ik)
         self[ik] = inputs[ik]
 
-  def _assert_is_writable(self):
-    if self._disable_update_property:
-      raise Exception('Can not update property after generate this object')
+  def _assert_is_writable(self, name):
+    if self._disable_update_property and not self._property_fields()[name].is_rewritable:
+      raise NotRewritable(name)

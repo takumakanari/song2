@@ -13,7 +13,12 @@ class _Property(object):
   def __init__(self, nullable=True, empty=True, default=None):
     self.nullable = nullable
     self.empty = empty
-    self.default_value = default
+    self.default = default
+    self.is_rewritable = False
+
+  def rewritable(self):
+    self.is_rewritable = True
+    return self
 
   def validate(self, name, v):
     if v is None:
@@ -25,10 +30,6 @@ class _Property(object):
       raise InvalidProperty('"%s" should be non-empty value' % name)
     self._validate_type(v, self.typ, name=name)
     self.post_validate(v)
-
-  @property
-  def default(self):
-    return self.default_value
 
   def _validate_type(cls, v, valid_types, name=None):
     if valid_types and not isinstance(v, valid_types):

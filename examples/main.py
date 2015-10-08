@@ -22,10 +22,11 @@ class Person(Schema):
   floatproperty = Float()
   longproperty = Long()
   frends = ArrayOf(Frend)
+  rewritable_field = String().rewritable()
 
 
 if __name__ == '__main__':
-  print Person(
+  p = Person(
     name='George',
     age=25,
     address=Address(addr='1-2-3', country='Japan'),
@@ -37,3 +38,5 @@ if __name__ == '__main__':
     longproperty = 5L,
     frends = [Frend(name='Michel', age=5)]
   ).json
+  p['rewritable_field'] ='this is rewritable'
+  print p.json
