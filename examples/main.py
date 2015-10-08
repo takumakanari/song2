@@ -39,4 +39,8 @@ if __name__ == '__main__':
     frends = [Frend(name='Michel', age=5)]
   ).json
   p['rewritable_field'] ='this is rewritable'
-  print p.json
+  try:
+    import json
+    print json.dumps(p.json)
+  except ImportError:
+    print p.json
