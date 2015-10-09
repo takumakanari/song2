@@ -6,23 +6,34 @@ from song2.types import *
 
 Address = Schema.make(addr=String(), country=String())
 Hobby = Schema.make(name=String(), years=Int())
-Frend = Schema.make(name=String(), age=Int())
 
 
 class Person(Schema):
-  merge_optional = True
-
   name = String()
   age = Int()
-  boy = Bool()
-  address = Nested(Address)
-  hobbies = ArrayOf(Hobby)
   comments = ArrayOf(str)
+  hobbies = ArrayOf(Hobby)
+  address = Nested(Address)
   try_default = String(default='this is default')
   floatproperty = Float()
   longproperty = Long()
-  frends = ArrayOf(Frend)
+
+
+
+class Rewritable(Schema):
   rewritable_field = String().rewritable()
+
+
+class DefaultValue(Schema):
+  message = String(default='please enter a message')
+
+
+def dump(s):
+  try:
+    import json
+    print json.dumps(s.json)
+  except ImportError:
+    print p.json
 
 
 if __name__ == '__main__':
@@ -30,17 +41,16 @@ if __name__ == '__main__':
     name='George',
     age=25,
     address=Address(addr='1-2-3', country='Japan'),
-    boy=True,
     hobbies=[Hobby(name='Music', years=20), Hobby(name='Cycling', years=3)],
-    comments=('hello', 'goodbye'),
-    unknown='OK',
-    floatproperty = 1.4,
-    longproperty = 5L,
-    frends = [Frend(name='Michel', age=5)]
+    comments=('hello', 'goodbye')
   ).json
-  p['rewritable_field'] ='this is rewritable'
-  try:
-    import json
-    print json.dumps(p.json)
-  except ImportError:
-    print p.json
+  dump(p)
+
+  p = Rewritable(rewritable_field='one')
+  p['rewritable_field'] = 'two'
+  dump(p)
+
+  p1 = DefaultValue()
+  p2 = DefaultValue(message='here is message')
+  print p1
+  print p2
