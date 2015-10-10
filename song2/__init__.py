@@ -13,15 +13,6 @@ import inspect
 from song2.types import _Property
 
 
-def _property_fields(obj):
-  fields = {}
-  for name in dir(obj):
-    value = getattr(obj, name)
-    if isinstance(value, _Property):
-      fields[name] = value
-  return fields
-
-
 class UnknownProperty(Exception):
 
   def __init__(self, schema, name):
@@ -55,8 +46,7 @@ class Schema(dict):
       self[k] = v
     if self.merge_optional or not self.allow_optional:
       self._handle_optional_values(fields, kwargs)
-    if self.immutable:
-      self._disable_update_property = True
+    self._disable_update_property = self.immutable
 
   @property
   def json(self):
@@ -68,7 +58,11 @@ class Schema(dict):
     try:
       return getattr(cls, n)
     except AttributeError:
-      pf = _property_fields(cls)
+      pf = {}
+      for name in dir(cls):
+        value = getattr(cls, name)
+        if isinstance(value, _Property):
+          pf[name] = value
       setattr(cls, n, pf)
       return pf
 
