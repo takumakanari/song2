@@ -85,19 +85,18 @@ class Schema(dict):
     setattr(_Dynamic, 'immutable', immutable)
     return _Dynamic
 
-  def __getattr__(self, name):
-    try:
-      return self[name]
-    except KeyError:
-      raise AttributeError(name)
-
   def __setitem__(self, key, value):
     self._assert_is_writable(key)
     super(Schema, self).__setitem__(key, value)
 
   def update(self, *args, **kwargs):
-    self._assert_is_writable(key)
-    super(Schema, self).update(*args, **kwargs)
+    for src in args:
+      for k, v in src.items():
+        self._assert_is_writable(k)
+        self[k] = v
+    for k, v in kwargs.items():
+      self._assert_is_writable(k)
+      self[k] = v
 
   def _handle_optional_values(self, fields, inputs):
     field_keys = fields.keys()
