@@ -9,7 +9,6 @@ __license__ = 'MIT'
 __description__ = 'Dict based immutable/typesafe schema'
 
 
-import inspect
 from song2.types import _Property
 
 
