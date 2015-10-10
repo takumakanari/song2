@@ -92,10 +92,8 @@ class Schema(dict):
   def update(self, *args, **kwargs):
     for src in args:
       for k, v in src.items():
-        self._assert_is_writable(k)
         self[k] = v
     for k, v in kwargs.items():
-      self._assert_is_writable(k)
       self[k] = v
 
   def _handle_optional_values(self, fields, inputs):
