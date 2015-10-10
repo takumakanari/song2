@@ -29,9 +29,7 @@ setup(
     'Programming Language :: Python :: Implementation :: CPython',
     'Topic :: Software Development :: Libraries :: Python Modules',
   ],
-  install_requires = [
-    'nose'
-  ],
+  install_requires = [],
   license = 'MIT',
   keywords = 'schema dict immutable typesafe',
   zip_safe = False,
