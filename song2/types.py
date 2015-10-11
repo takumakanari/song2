@@ -7,8 +7,23 @@ class InvalidValue(ValueError):
   pass
 
 
+class InvalidType(ValueError):
+
+  def __init__(self, name, excepted, val):
+    self.name = name
+    self.excepted = excepted
+    self.val = val
+
+  def __str__(self):
+    return '"%s"=%s must be %s type, but %s' % (self.name, val,
+                                                self.excepted, type(self.val))
+
+
+
 class _Property(object):
   typ = None
+  VALIDATE_CONTINUE = 1
+  VALIDATE_STOP = 2
 
   def __init__(self, nullable=True, empty=True, default=None):
     self.nullable = nullable
@@ -21,22 +36,16 @@ class _Property(object):
     return self
 
   def validate(self, name, v):
-    if v is None:
+    if v:
+      if not isinstance(v, self.typ):
+        raise InvalidType(name, self.typ, v)
+      return self.VALIDATE_CONTINUE
+    elif v is None:
       if not self.nullable:
         raise InvalidValue('"%s" is not nullable' % name)
-      else:
-        return
-    if not v and not self.empty:
+    elif not self.empty:
       raise InvalidValue('"%s" should be non-empty value' % name)
-    self._validate_type(v, self.typ, name=name)
-    self.post_validate(v)
-
-  def _validate_type(cls, v, valid_types, name=None):
-    if valid_types and not isinstance(v, valid_types):
-      raise InvalidValue('"%s"=%s must be %s type, but %s' % (name, v, valid_types, type(v)))
-
-  def post_validate(self, v):
-    pass
+    return self.VALIDATE_STOP
 
 
 class String(_Property):
@@ -85,7 +94,9 @@ class ArrayOf(_Property):
     self.element_type = cls
     super(ArrayOf, self).__init__(nullable=nullable, empty=empty, default=default)
 
-  def post_validate(self, values):
-    for v in values:
-      self._validate_type(v, self.element_type)
+  def validate(self, name, values):
+    if super(ArrayOf, self).validate(name, values) == self.VALIDATE_CONTINUE:
+      for v in values:
+        if not isinstance(v, self.element_type):
+          raise InvalidType(name, self.element_type, v)
 

@@ -32,6 +32,7 @@ class NotRewritable(Exception):
 
 
 class Schema(dict):
+  __typefields__ = None
   allow_optional = True
   merge_optional = False
   immutable = True
@@ -39,10 +40,14 @@ class Schema(dict):
   def __init__(self, **kwargs):
     self._disable_update_property = False
     fields = self._property_fields()
-    for k, value_type in fields.items():
-      v = kwargs[k] if kwargs.has_key(k) else value_type.default
+    instance = super(Schema, self)
+    for k, value_type in fields:
+      try:
+        v = kwargs[k]
+      except KeyError:
+        v = value_type.default
       value_type.validate(k, v)
-      self[k] = v
+      instance.__setitem__(k, v)
     if self.merge_optional or not self.allow_optional:
       self._handle_optional_values(fields, kwargs)
     self._disable_update_property = self.immutable
@@ -53,17 +58,14 @@ class Schema(dict):
 
   @classmethod
   def _property_fields(cls):
-    n = '__song2propertyfields__'
-    try:
-      return getattr(cls, n)
-    except AttributeError:
-      pf = {}
+    if cls.__typefields__ is None:
+      pf = []
       for name in dir(cls):
         value = getattr(cls, name)
         if isinstance(value, _Property):
-          pf[name] = value
-      setattr(cls, n, pf)
-      return pf
+          pf.append((name, value))
+      cls.__typefields__ = pf
+    return cls.__typefields__
 
   @classmethod
   def make(cls, allow_optional=True, merge_optional=False, immutable=True, **kwargs):
@@ -96,7 +98,7 @@ class Schema(dict):
       self[k] = v
 
   def _handle_optional_values(self, fields, inputs):
-    field_keys = fields.keys()
+    field_keys = map(lambda x:x[0], fields)
     for ik in inputs.keys():
       if ik not in field_keys:
         if not self.allow_optional:
@@ -104,5 +106,6 @@ class Schema(dict):
         self[ik] = inputs[ik]
 
   def _assert_is_writable(self, name):
-    if self._disable_update_property and not self._property_fields()[name].is_rewritable:
+    if self._disable_update_property and not getattr(self, name).is_rewritable:
       raise NotRewritable(name)
+

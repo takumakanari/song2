@@ -51,7 +51,7 @@ class TestStringType(TestCase):
     s = Schema.make(v=String())()
     eq_(s['v'], None)
 
-  @raises(InvalidValue)
+  @raises(InvalidType)
   def test_invalid(self):
     Schema.make(v=String())(v=1234)
 
@@ -66,7 +66,7 @@ class TestIntType(TestCase):
     s = Schema.make(v=Int())()
     eq_(s['v'], 0)
 
-  @raises(InvalidValue)
+  @raises(InvalidType)
   def test_invalid(self):
     Schema.make(v=Int())(v='test')
   
@@ -85,7 +85,7 @@ class TestFloatType(TestCase):
     s = Schema.make(v=Float())()
     eq_(s['v'], 0.0)
 
-  @raises(InvalidValue)
+  @raises(InvalidType)
   def test_invalid(self):
     Schema.make(v=Float())(v='test')
   
@@ -104,7 +104,7 @@ class TestLongType(TestCase):
     s = Schema.make(v=Long())()
     eq_(s['v'], 0L)
 
-  @raises(InvalidValue)
+  @raises(InvalidType)
   def test_invalid(self):
     Schema.make(v=Long())(v='test')
   
@@ -123,7 +123,7 @@ class TestBoolType(TestCase):
     s = Schema.make(v=Bool())()
     eq_(s['v'], False)
 
-  @raises(InvalidValue)
+  @raises(InvalidType)
   def test_invalid(self):
     Schema.make(v=Bool())(v='test')
   
@@ -142,7 +142,7 @@ class TestNestedType(TestCase):
     s = Schema.make(v=Nested(str))()
     eq_(s['v'], None)
 
-  @raises(InvalidValue)
+  @raises(InvalidType)
   def test_invalid(self):
     Schema.make(v=Nested(str))(v=1234)
 
@@ -161,11 +161,11 @@ class TestArrayOfType(TestCase):
     s = Schema.make(v=ArrayOf(str))()
     eq_(s['v'], [])
 
-  @raises(InvalidValue)
+  @raises(InvalidType)
   def test_invalid(self):
     Schema.make(v=ArrayOf(str))(v=1234)
 
-  @raises(InvalidValue)
+  @raises(InvalidType)
   def test_invalid_element(self):
     Schema.make(v=ArrayOf(str))(v=['test', 1])
 
