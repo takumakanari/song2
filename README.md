@@ -1,2 +1,2 @@
 # song2
-Dict based immutable/typesafe schema
+Typesafe/Immutable schema for dict object

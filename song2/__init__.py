@@ -6,7 +6,7 @@ __song2__ = 'song2'
 __version__ = '0.1.0'
 __author__ = 'Takumakanari'
 __license__ = 'MIT'
-__description__ = 'Dict based immutable/typesafe schema'
+__description__ = 'Typesafe/Immutable schema for dict object'
 
 
 from song2.types import _Property
