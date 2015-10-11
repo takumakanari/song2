@@ -39,7 +39,7 @@ class Schema(dict):
 
   def __init__(self, **kwargs):
     self._disable_update_property = False
-    fields = self._property_fields()
+    fields = self._typefields()
     instance = super(Schema, self)
     for k, value_type in fields:
       try:
@@ -57,7 +57,7 @@ class Schema(dict):
     return self
 
   @classmethod
-  def _property_fields(cls):
+  def _typefields(cls):
     if cls.__typefields__ is None:
       pf = []
       for name in dir(cls):
@@ -68,7 +68,8 @@ class Schema(dict):
     return cls.__typefields__
 
   @classmethod
-  def make(cls, allow_optional=True, merge_optional=False, immutable=True, **kwargs):
+  def make(cls, allow_optional=True, merge_optional=False,
+           immutable=True, **kwargs):
     """
      Provides dynamic making {Schema} class like as follows:
        ```
@@ -79,7 +80,7 @@ class Schema(dict):
       pass
     for prop, typ in kwargs.items():
       if not isinstance(typ, _Property):
-        raise ValueError('property "%s" should be instance of %s type' % (prop, _Property))
+        raise ValueError('"%s" should be instance of %s' % (prop, _Property))
       setattr(_Dynamic, prop, typ)
     setattr(_Dynamic, 'allow_optional', allow_optional)
     setattr(_Dynamic, 'merge_optional', merge_optional)
@@ -98,14 +99,14 @@ class Schema(dict):
       self[k] = v
 
   def _handle_optional_values(self, fields, inputs):
-    field_keys = map(lambda x:x[0], fields)
+    field_keys = map(lambda x: x[0], fields)
+    instance = super(Schema, self)
     for ik in inputs.keys():
       if ik not in field_keys:
         if not self.allow_optional:
           raise UnknownProperty(self.__class__.__name__, ik)
-        self[ik] = inputs[ik]
+        instance.__setitem__(ik, inputs[ik])
 
   def _assert_is_writable(self, name):
     if self._disable_update_property and not getattr(self, name).is_rewritable:
       raise NotRewritable(name)
-

@@ -15,9 +15,8 @@ class InvalidType(ValueError):
     self.val = val
 
   def __str__(self):
-    return '"%s"=%s must be %s type, but %s' % (self.name, val,
+    return '"%s"=%s must be %s type, but %s' % (self.name, self.val,
                                                 self.excepted, type(self.val))
-
 
 
 class _Property(object):
@@ -84,7 +83,8 @@ class Nested(_Property):
 
   def __init__(self, cls, nullable=True, empty=True, default=None):
     self.typ = cls
-    super(Nested, self).__init__(nullable=nullable, empty=empty, default=default)
+    super(Nested, self).__init__(nullable=nullable,
+                                 empty=empty, default=default)
 
 
 class ArrayOf(_Property):
@@ -92,11 +92,11 @@ class ArrayOf(_Property):
 
   def __init__(self, cls, nullable=True, empty=True, default=[]):
     self.element_type = cls
-    super(ArrayOf, self).__init__(nullable=nullable, empty=empty, default=default)
+    super(ArrayOf, self).__init__(nullable=nullable, empty=empty,
+                                  default=default)
 
   def validate(self, name, values):
     if super(ArrayOf, self).validate(name, values) == self.VALIDATE_CONTINUE:
       for v in values:
         if not isinstance(v, self.element_type):
           raise InvalidType(name, self.element_type, v)
-
