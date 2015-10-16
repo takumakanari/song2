@@ -2,6 +2,7 @@
 # -*- encoding:utf-8 -*-
 from __future__ import absolute_import
 
+import copy
 
 class InvalidValue(ValueError):
   pass
@@ -27,8 +28,12 @@ class _Property(object):
   def __init__(self, nullable=True, empty=True, default=None):
     self.nullable = nullable
     self.empty = empty
-    self.default = default
+    self._default = default
     self.is_rewritable = False
+
+  @property
+  def default(self):
+    return self._default
 
   def rewritable(self):
     self.is_rewritable = True
@@ -94,6 +99,10 @@ class ArrayOf(_Property):
     self.element_type = cls
     super(ArrayOf, self).__init__(nullable=nullable, empty=empty,
                                   default=default)
+
+  @property
+  def default(self):
+    return copy.deepcopy(self._default)
 
   def validate(self, name, values):
     if super(ArrayOf, self).validate(name, values) == self.VALIDATE_CONTINUE:
