@@ -11,7 +11,7 @@ setup(
     ]
   ),
   package_dir = {
-      '' : '.'
+    '' : '.'
   },
   author = song2.__author__,
   author_email = 'chemtrails.t@gmail.com',
@@ -19,19 +19,19 @@ setup(
   maintainer_email = 'chemtrails.t@gmail.com',
   description = song2.__description__,
   classifiers = [
-    'Development Status :: 4 - Beta'
+    'Development Status :: 4 - Beta',
+    'Environment :: Web Environment',
     'Intended Audience :: Developers',
-    'License :: Other/Proprietary License',
+    'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 2',
     'Programming Language :: Python :: 2.7',
-    'Programming Language :: Python :: Implementation :: CPython',
     'Topic :: Software Development :: Libraries :: Python Modules',
   ],
   install_requires = [],
   license = 'MIT',
   keywords = 'schema dict immutable typesafe',
-  zip_safe = False,
+  zip_safe = True,
   include_package_data = True
 )
