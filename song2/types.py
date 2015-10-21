@@ -92,6 +92,11 @@ class Nested(_Property):
     super(Nested, self).__init__(nullable=nullable,
                                  empty=empty, default=default)
 
+  @property
+  def default(self):
+    return copy.deepcopy(self._default) \
+      if self._default is not None else None
+
 
 class ArrayOf(_Property):
   typ = (list, tuple)
@@ -103,7 +108,8 @@ class ArrayOf(_Property):
 
   @property
   def default(self):
-    return copy.deepcopy(self._default)
+    return copy.deepcopy(self._default) \
+      if self._default is not None else None
 
   def validate(self, name, values):
     if super(ArrayOf, self).validate(name, values) == self.VALIDATE_CONTINUE:

@@ -138,6 +138,10 @@ class TestNestedType(TestCase):
     s = Schema.make(v=Nested(str))(v='test')
     eq_(s['v'], 'test')
 
+  def test_default_as_not_none(self):
+    s = Schema.make(v=Nested(str, default='OK'))()
+    eq_(s['v'], 'OK')
+
   def test_default(self):
     s = Schema.make(v=Nested(str))()
     eq_(s['v'], None)
@@ -160,6 +164,10 @@ class TestArrayOfType(TestCase):
   def test_default(self):
     s = Schema.make(v=ArrayOf(str))()
     eq_(s['v'], [])
+
+  def test_default_as_nonw(self):
+    s = Schema.make(v=ArrayOf(str, default=None))()
+    eq_(s['v'], None)
 
   @raises(InvalidType)
   def test_invalid(self):
