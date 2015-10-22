@@ -3,7 +3,7 @@
 from __future__ import absolute_import
 
 __song2__ = 'song2'
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = 'Takumakanari'
 __license__ = 'MIT'
 __description__ = 'Typesafe/Immutable schema for dict object'
