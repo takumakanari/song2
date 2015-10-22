@@ -67,6 +67,11 @@ class TestSchema(TestCase):
     s.update({'v' : 'new value3'})
     eq_(s['v'], 'new value3')
 
+  @raises(InvalidType)
+  def test_rewritable_but_invalid_type(self):
+    s = Schema.make(v=String().rewritable())(v='test')
+    s['v'] = 1
+
   def test_allow_optional(self):
     class S(Schema):
       name = String()

@@ -88,7 +88,7 @@ class Schema(dict):
     return _Dynamic
 
   def __setitem__(self, key, value):
-    self._assert_is_writable(key)
+    self._assert_is_writable(key, value)
     super(Schema, self).__setitem__(key, value)
 
   def update(self, *args, **kwargs):
@@ -107,6 +107,8 @@ class Schema(dict):
           raise UnknownProperty(self.__class__.__name__, ik)
         instance.__setitem__(ik, inputs[ik])
 
-  def _assert_is_writable(self, name):
-    if self._disable_update_property and not getattr(self, name).is_rewritable:
+  def _assert_is_writable(self, name, value):
+    value_type = getattr(self, name)
+    if self._disable_update_property and not value_type.is_rewritable:
       raise NotRewritable(name)
+    value_type.validate(name, value)

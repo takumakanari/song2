@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 import copy
 
+
 class InvalidValue(ValueError):
   pass
 
