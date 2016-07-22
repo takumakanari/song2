@@ -26,7 +26,7 @@ It's easy to define schema class.
 class Person(Schema):
   name = String()
   age = Int()
-  comments = ArrayOf(str)
+  comments = StringArray()
   hobbies = ArrayOf(Hobby)
   address = Nested(Address)
 ```
@@ -61,6 +61,7 @@ from song2.types import *
 
 # primitive types
 String()                # -> str/unicode
+StringValue()           # -> str/unicode, None/empty is not allowed
 Int()/Float()/Long()    # -> int/float/long
 Bool()                  # -> bool
 
@@ -69,7 +70,16 @@ Nested(OtherSchema)     # -> Schema class (will be dict)
 
 # arrays
 ArrayOf(str)            # -> list or tuple of str
+ListOf(str)             # -> list of str
+TupleOf(str)            # -> tuple of str
 ArrayOf(OtherSchema)    # -> list or tuple of Schema class, will be array of dict
+
+# alias of array types
+StringArray()
+IntArray()
+FloatArray()
+LongArray()
+BoolArray()
 ```
 
 ##### Define default value

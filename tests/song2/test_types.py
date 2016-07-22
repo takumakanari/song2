@@ -56,6 +56,29 @@ class TestStringType(TestCase):
     Schema.make(v=String())(v=1234)
 
 
+class TestStringValueType(TestCase):
+
+  def test_valid(self):
+    s = Schema.make(v=StringValue())(v='test')
+    eq_(s['v'], 'test')
+  
+  @raises(InvalidValue)
+  def test_not_nullable_by_default(self):
+    Schema.make(v=StringValue())()
+
+  @raises(InvalidValue)
+  def test_not_empty_by_default(self):
+    Schema.make(v=StringValue())(v='')
+
+  def test_default(self):
+    s = Schema.make(v=StringValue(default='ok'))()
+    eq_(s['v'], 'ok')
+
+  @raises(InvalidType)
+  def test_invalid(self):
+    Schema.make(v=StringValue())(v=1234)
+
+
 class TestIntType(TestCase):
 
   def test_valid(self):
@@ -176,4 +199,57 @@ class TestArrayOfType(TestCase):
   @raises(InvalidType)
   def test_invalid_element(self):
     Schema.make(v=ArrayOf(str))(v=['test', 1])
+
+
+class ListTupleOfType(TestCase):
+
+  def test_valid_tuple(self):
+    s = Schema.make(v=ListOf(str))(v=['test1', 'test2'])
+    eq_(s['v'], ['test1', 'test2'])
+
+  def test_default(self):
+    s = Schema.make(v=ListOf(str))()
+    eq_(s['v'], [])
+
+
+class TestTupleOfType(TestCase):
+
+  def test_valid_tuple(self):
+    s = Schema.make(v=TupleOf(str))(v=('test1', 'test2'))
+    eq_(s['v'], ('test1', 'test2'))
+
+  def test_default(self):
+    s = Schema.make(v=TupleOf(str))()
+    eq_(s['v'], ())
+
+
+class TestStringArrayType(TestCase):
+
+  def test_valid_list(self):
+    s = Schema.make(v=StringArray())(v=['test1', 'test2'])
+    eq_(s['v'], ['test1', 'test2'])
+
+  def test_valid_tuple(self):
+    s = Schema.make(v=StringArray())(v=('test1', 'test2'))
+    eq_(s['v'], ('test1', 'test2'))
+
+  @raises(InvalidType)
+  def test_invalid_element(self):
+    Schema.make(v=StringArray())(v=['test', 1])
+
+
+class TestIntArrayType(TestCase):
+
+  def test_valid_list(self):
+    s = Schema.make(v=IntArray())(v=[1, 2])
+    eq_(s['v'], [1, 2])
+
+  def test_valid_tuple(self):
+    s = Schema.make(v=IntArray())(v=(1, 2))
+    eq_(s['v'], (1, 2))
+
+  @raises(InvalidType)
+  def test_invalid_element(self):
+    Schema.make(v=IntArray())(v=['test', 1])
+
 

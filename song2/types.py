@@ -17,8 +17,8 @@ class InvalidType(ValueError):
     self.val = val
 
   def __str__(self):
-    return '"%s"=%s must be %s type, but %s' % (self.name, self.val,
-                                                self.excepted, type(self.val))
+    return '%s=%s: %s is expected, but %s' % (self.name, self.val,
+                                              self.excepted, type(self.val))
 
 
 class _Property(object):
@@ -55,6 +55,12 @@ class _Property(object):
 
 class String(_Property):
   typ = basestring
+
+
+class StringValue(String):
+
+  def __init__(self, default=None):
+    super(StringValue, self).__init__(nullable=False, empty=False, default=default)
 
 
 class Int(_Property):
@@ -116,3 +122,35 @@ class ArrayOf(_Property):
       for v in values:
         if not isinstance(v, self.element_type):
           raise InvalidType(name, self.element_type, v)
+
+
+class ListOf(ArrayOf):
+  typ = list
+
+  def __init__(self, cls, nullable=True, empty=True, default=[]):
+    super(ListOf, self).__init__(cls, nullable=nullable, empty=empty,
+                                 default=default)
+
+
+class TupleOf(ArrayOf):
+  typ = tuple
+
+  def __init__(self, cls, nullable=True, empty=True, default=()):
+    super(TupleOf, self).__init__(cls, nullable=nullable, empty=empty,
+                                  default=default)
+
+
+def _array_type_dynamically(typ):
+  class _DynamicArrayOf(ArrayOf):
+    def __init__(self, nullable=True, empty=True, default=[]):
+      super(_DynamicArrayOf, self).__init__(typ, nullable=nullable, empty=empty,
+                                            default=default)
+  return _DynamicArrayOf
+
+
+StringArray = _array_type_dynamically(basestring)
+IntArray = _array_type_dynamically(int)
+FloatArray = _array_type_dynamically(float)
+LongArray = _array_type_dynamically(long)
+BoolArray = _array_type_dynamically(bool)
+
