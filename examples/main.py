@@ -11,13 +11,12 @@ Hobby = Schema.make(name=String(), years=Int())
 class Person(Schema):
   name = String()
   age = Int()
-  comments = ArrayOf(str)
+  comments = StringArray()
   hobbies = ArrayOf(Hobby)
   address = Nested(Address)
-  try_default = String(default='this is default')
+  try_default = StringValue(default='this is default')
   floatproperty = Float()
   longproperty = Long()
-
 
 
 class Rewritable(Schema):

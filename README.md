@@ -26,7 +26,7 @@ It's easy to define schema class.
 class Person(Schema):
   name = String()
   age = Int()
-  comments = ArrayOf(str)
+  comments = StringArray()
   hobbies = ArrayOf(Hobby)
   address = Nested(Address)
 ```
