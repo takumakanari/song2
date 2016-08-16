@@ -29,6 +29,7 @@ class Person(Schema):
   comments = StringArray()
   hobbies = ArrayOf(Hobby)
   address = Nested(Address)
+  message = StringDict(str)
 ```
 
 Also *Schema.make* is simple way to define schema class:
@@ -45,7 +46,11 @@ p = Person(
   age=25,
   address=Address(addr='1-2-3', country='Japan'),
   hobbies=[Hobby(name='Music', years=20), Hobby(name='Cycling', years=3)],
-  comments=('hello', 'goodbye')
+  comments=('hello', 'goodbye'),
+  message={
+    'one': 'hello',
+    'two': 'goodbye'
+  }
 )
 p['name'] # -> 'George'
 p['address'] # -> {'addr':'1-2-3', 'country':'Japan'}
@@ -74,12 +79,17 @@ ListOf(str)             # -> list of str
 TupleOf(str)            # -> tuple of str
 ArrayOf(OtherSchema)    # -> list or tuple of Schema class, will be array of dict
 
+# dicts
+DictOf(str, int)        # -> dict of {str: int}
+DictOf(str, OtherSchema)# -> dict of {str: OtherSchema}
+
 # alias of array types
 StringArray()
 IntArray()
 FloatArray()
 LongArray()
 BoolArray()
+StringDict(value_type)
 ```
 
 ##### Define default value

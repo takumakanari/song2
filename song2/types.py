@@ -154,3 +154,44 @@ FloatArray = _array_type_dynamically(float)
 LongArray = _array_type_dynamically(long)
 BoolArray = _array_type_dynamically(bool)
 
+
+class DictOf(_Property):
+  typ = dict
+
+  def __init__(self, key_type, value_type, nullable=True,
+               empty=True, default={}, value_nullable=True):
+    self.key_type = key_type
+    self.value_type = value_type
+    self.value_nullable = value_nullable
+    super(DictOf, self).__init__(nullable=nullable, empty=empty,
+                                 default=default)
+
+  @property
+  def default(self):
+    return copy.deepcopy(self._default) \
+      if self._default is not None else None
+
+  def validate(self, name, val):
+    if super(DictOf, self).validate(name, val) == self.VALIDATE_CONTINUE:
+      for k, v in val.items():
+        if not isinstance(k, self.key_type):
+          raise InvalidType(name, self.key_type, k)
+        if v is None:
+          if not self.value_nullable:
+            raise InvalidValue('%s.%s is not nullable' % (name, k))
+        elif not isinstance(v, self.value_type):
+          raise InvalidType(name, self.value_type, v)
+
+
+def _dict_type_dynamically(typ):
+  class _DynamicDictOf(DictOf):
+    def __init__(self, value_type, nullable=True, empty=True,
+                 default={}, value_nullable=True):
+      super(_DynamicDictOf, self).__init__(typ, value_type, nullable=nullable,
+                                           empty=empty, default=default,
+                                           value_nullable=value_nullable)
+  return _DynamicDictOf
+
+
+StringDict = _dict_type_dynamically(basestring)
+
