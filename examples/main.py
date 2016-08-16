@@ -8,6 +8,10 @@ Address = Schema.make(addr=String(), country=String())
 Hobby = Schema.make(name=String(), years=Int())
 
 
+class Prop(Schema):
+  text = StringValue()
+
+
 class Person(Schema):
   name = String()
   age = Int()
@@ -17,6 +21,7 @@ class Person(Schema):
   try_default = StringValue(default='this is default')
   floatproperty = Float()
   longproperty = Long()
+  dynamic_dict = StringDict(Prop)
 
 
 class Rewritable(Schema):
@@ -41,7 +46,11 @@ if __name__ == '__main__':
     age=25,
     address=Address(addr='1-2-3', country='Japan'),
     hobbies=[Hobby(name='Music', years=20), Hobby(name='Cycling', years=3)],
-    comments=('hello', 'goodbye')
+    comments=('hello', 'goodbye'),
+    dynamic_dict = {
+      'field1' : Prop(text='hello!'),
+      'field2' : Prop(text='goodbye!')
+    }
   ).json
   dump(p)
 

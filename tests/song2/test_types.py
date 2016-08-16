@@ -253,3 +253,48 @@ class TestIntArrayType(TestCase):
     Schema.make(v=IntArray())(v=['test', 1])
 
 
+class TestDictType(TestCase):
+
+  def test_valid_dict(self):
+    s = Schema.make(v=DictOf(str, int))(v={'f1': 1, 'f2' : 2})
+    eq_(s['v'], {'f1': 1, 'f2' : 2})
+
+  @raises(InvalidType)
+  def test_invalid_key_type(self):
+    Schema.make(v=DictOf(int, int))(v={'INVALID': 1})
+
+  @raises(InvalidType)
+  def test_invalid_value_type(self):
+    Schema.make(v=DictOf(str, int))(v={'f1': 'INVALID'})
+
+  @raises(InvalidValue)
+  def test_valie_is_not_nullable(self):
+    Schema.make(v=DictOf(str, int, value_nullable=False))(v={'f1': None})
+ 
+  def test_valie_is_nullable_by_default(self):
+    s = Schema.make(v=DictOf(str, int))(v={'f1': None})
+    eq_(s['v'], {'f1': None})
+
+
+class TestStringDictType(TestCase):
+
+  def test_valid_dict(self):
+    s = Schema.make(v=StringDict(int))(v={'f1': 1, 'f2' : 2})
+    eq_(s['v'], {'f1': 1, 'f2' : 2})
+
+  @raises(InvalidType)
+  def test_invalid_key_type(self):
+    Schema.make(v=StringDict(int))(v={0: 1})
+
+  @raises(InvalidType)
+  def test_invalid_value_type(self):
+    Schema.make(v=StringDict(int))(v={'f1': 'INVALID'})
+
+  @raises(InvalidValue)
+  def test_valie_is_not_nullable(self):
+    Schema.make(v=StringDict(int, value_nullable=False))(v={'f1': None})
+ 
+  def test_valie_is_nullable_by_default(self):
+    s = Schema.make(v=StringDict(int))(v={'f1': None})
+    eq_(s['v'], {'f1': None})
+
